@@ -82,49 +82,6 @@
     }
     .divider span { color: #f0c040; font-size: 18px; }
 
-    /* LSE guaranteed banner */
-    .lse-banner {
-      position: relative;
-      z-index: 10;
-      max-width: 1100px;
-      margin: 0 auto 32px;
-      background: linear-gradient(135deg, rgba(0,42,92,0.5), rgba(10,60,130,0.5));
-      border: 1px solid rgba(100,160,255,0.35);
-      border-radius: 20px;
-      padding: 28px 36px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 40px rgba(0,80,200,0.15), inset 0 0 60px rgba(0,40,120,0.1);
-      animation: lsePulse 3s ease-in-out infinite;
-    }
-    @keyframes lsePulse {
-      0%,100% { box-shadow: 0 0 40px rgba(0,80,200,0.15), inset 0 0 60px rgba(0,40,120,0.1); }
-      50%      { box-shadow: 0 0 70px rgba(0,100,255,0.3), inset 0 0 60px rgba(0,40,120,0.1); }
-    }
-    .lse-banner-icon { font-size: 48px; flex-shrink: 0; filter: drop-shadow(0 0 14px rgba(100,180,255,0.7)); }
-    .lse-banner-text { flex: 1; min-width: 200px; }
-    .lse-banner-text .lse-sure {
-      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-      color: #60a5fa; margin-bottom: 6px;
-    }
-    .lse-banner-text h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(18px,3vw,26px); color: #fff; margin-bottom: 6px;
-    }
-    .lse-banner-text p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
-    .lse-banner-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #002a5c, #0f52ba);
-      color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 1.5px;
-      text-transform: uppercase; text-decoration: none; border-radius: 50px;
-      box-shadow: 0 6px 24px rgba(15,82,186,0.45);
-      transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap; flex-shrink: 0;
-    }
-    .lse-banner-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 36px rgba(15,82,186,0.65); }
     .badge-gold {
       display: inline-flex; align-items: center; gap: 6px;
       background: linear-gradient(135deg,#ffd700,#ff9f00);
