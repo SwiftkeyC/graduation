@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кто ты, выпускница?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0d0020 0%, #1a0040 50%, #0a0d2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.08; transform: scale(0.8); }
+      to   { opacity: 0.9;  transform: scale(1.3); }
+    }
+
+    /* Glitter sparkles */
+    .glitter {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      width: var(--gs);
+      height: var(--gs);
+      background: var(--gc);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: glitterFloat var(--gd) ease-in-out infinite;
+      animation-delay: var(--gdel);
+    }
+    @keyframes glitterFloat {
+      0%,100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.6; }
+      50%      { transform: translateY(-18px) rotate(180deg) scale(1.2); opacity: 1; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 28px;
+      width: min(480px, 92vw);
+      padding: 56px 48px 52px;
+      text-align: center;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      animation: cardIn 1s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(50px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .question-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 18px;
+      animation: iconBounce 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(180,120,255,0.6));
+    }
+    @keyframes iconBounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(180,120,255,0.7);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 5vw, 34px);
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #c084fc, #fff 55%, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .opt-btn {
+      position: relative;
+      padding: 18px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s;
+      overflow: hidden;
+      letter-spacing: 0.3px;
+    }
+    .opt-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(192,132,252,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .opt-btn:hover { transform: translateY(-3px); border-color: rgba(192,132,252,0.4); }
+    .opt-btn:hover::before { opacity: 1; }
+    .opt-btn:active { transform: scale(0.97); }
+
+    .opt-btn.wrong {
+      animation: wrongShake 0.5s ease both;
+      border-color: rgba(255,80,80,0.6) !important;
+      background: rgba(255,60,60,0.1) !important;
+    }
+    @keyframes wrongShake {
+      0%,100% { transform: translateX(0); }
+      15%  { transform: translateX(-8px); }
+      30%  { transform: translateX(8px); }
+      45%  { transform: translateX(-6px); }
+      60%  { transform: translateX(6px); }
+      75%  { transform: translateX(-3px); }
+      90%  { transform: translateX(3px); }
+    }
+
+    .opt-btn.right {
+      animation: rightPulse 0.5s ease both;
+      border-color: rgba(100,255,150,0.7) !important;
+      background: rgba(50,220,100,0.12) !important;
+      pointer-events: none;
+    }
+    @keyframes rightPulse {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(30,10,50,0.95);
+      border: 1px solid rgba(255,80,80,0.35);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      white-space: nowrap;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Floating cat memes ── */
+    .cat-float {
+      position: fixed;
+      z-index: 5;
+      width: 158px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      pointer-events: none;
+      opacity: 0;
+      animation: catAppear 0.7s var(--cad) ease forwards,
+                 catFloat  var(--cf) calc(var(--cad) + 0.7s) ease-in-out infinite alternate;
+    }
+    @keyframes catAppear {
+      from { opacity: 0; transform: rotate(var(--rot)) scale(0.8); }
+      to   { opacity: 1; transform: rotate(var(--rot)) scale(1); }
+    }
+    @keyframes catFloat {
+      from { transform: rotate(var(--rot)) translateY(0px); }
+      to   { transform: rotate(var(--rot)) translateY(-13px); }
+    }
+    .cat-float img {
+      width: 100%; height: 115px; object-fit: cover; display: block;
+      filter: brightness(0.84) saturate(1.15);
+    }
+    .cat-float .cf-flowers {
+      position: absolute; top: 7px; right: 7px;
+      font-size: 17px;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.7));
+    }
+    .cat-float .cf-caption {
+      padding: 7px 9px;
+      font-size: 10px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.4px; line-height: 1.35; text-align: center;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Impact','Arial Black',sans-serif;
+      text-shadow: 1px 1px 0 #000;
+      background: rgba(0,0,0,0.35);
+    }
+    @media (max-width: 960px) { .cat-float { display: none; } }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<!-- Floating cat memes -->
+<div class="cat-float" style="top:4%;left:1.5%;--rot:-7deg;--cf:4.2s;--cad:0.4s;">
+  <img src="https://cataas.com/cat/cute?v=20" alt="кот" loading="lazy" />
+  <div class="cf-flowers">🌸🌺</div>
+  <div class="cf-caption">Держи цветы! Ты лучшая 💜</div>
+</div>
+
+<div class="cat-float" style="top:3%;right:1.5%;--rot:6deg;--cf:5.1s;--cad:0.7s;">
+  <img src="https://cataas.com/cat/cute?v=21" alt="кот" loading="lazy" />
+  <div class="cf-flowers">🌼🌷</div>
+  <div class="cf-caption">Поступила в LSE!! 🎓</div>
+</div>
+
+<div class="cat-float" style="top:37%;left:0.8%;--rot:-4deg;--cf:5.8s;--cad:1.0s;">
+  <img src="https://cataas.com/cat?v=22" alt="кот" loading="lazy" />
+  <div class="cf-flowers">💐🌻</div>
+  <div class="cf-caption">Мы гордимся тобой 🥹</div>
+</div>
+
+<div class="cat-float" style="top:40%;right:0.8%;--rot:8deg;--cf:4.6s;--cad:1.3s;">
+  <img src="https://cataas.com/cat/funny?v=23" alt="кот" loading="lazy" />
+  <div class="cf-flowers">🌹🌸</div>
+  <div class="cf-caption">Молодец! Умничка!! 🌸</div>
+</div>
+
+<div class="cat-float" style="bottom:5%;left:2%;--rot:4deg;--cf:5.4s;--cad:1.6s;">
+  <img src="https://cataas.com/cat/cute?v=24" alt="кот" loading="lazy" />
+  <div class="cf-flowers">🌺🌼</div>
+  <div class="cf-caption">Топ выпускница! ✨</div>
+</div>
+
+<div class="cat-float" style="bottom:6%;right:1.5%;--rot:-9deg;--cf:4.9s;--cad:1.9s;">
+  <img src="https://cataas.com/cat?v=25" alt="кот" loading="lazy" />
+  <div class="cf-flowers">🌷💐</div>
+  <div class="cf-caption">P1. Навсегда. 🏆</div>
+</div>
+
+<div class="card">
+  <span class="question-icon">🎓</span>
+  <p class="eyebrow">С Выпускным</p>
+  <h1>Как тебя зовут в роблоксе?<br></h1>
+  <p class="subtitle">Выбирай</p>
+
+  <div class="options" id="options"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const names = [
+    { label: 'Shirinzhan', correct: true  },
+    { label: 'Shurupchello',     correct: false },
+    { label: 'shiringul',  correct: false },
+    { label: 'Shirin',     correct: false },
+  ];
+  names.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('options');
+  names.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = n.label;
+    btn.onclick = () => choose(btn, n.correct);
+    container.appendChild(btn);
+  });
+
+  const wrongMessages = [
+    '❌  не твое имя',
+    '🙅  захотела',
+    '😅  как будто у тебя такое имя',
+    '🚫  Неправильно',
+  ];
+  let wrongIdx = 0;
+  let toastTimer = null;
+
+  function choose(btn, correct) {
+    if (correct) {
+      btn.classList.add('right');
+      btn.textContent = '✓  Shirinzhan!';
+      document.querySelectorAll('.opt-btn').forEach(b => {
+        if (b !== btn) { b.style.opacity = '0.3'; b.style.pointerEvents = 'none'; }
+      });
+      showToast('🎉  Твои офферы', false);
+      burstConfetti();
+      setTimeout(() => { window.location.href = 'offers.html'; }, 2200);
+    } else {
+      btn.classList.remove('wrong');
+      void btn.offsetWidth;
+      btn.classList.add('wrong');
+      showToast(wrongMessages[wrongIdx++ % wrongMessages.length], true);
+      setTimeout(() => btn.classList.remove('wrong'), 600);
+    }
+  }
+
+  function showToast(msg, isWrong) {
+    const t = document.getElementById('toast');
+    clearTimeout(toastTimer);
+    t.textContent = msg;
+    t.className = 'toast show';
+    t.style.borderColor = isWrong ? 'rgba(255,80,80,0.5)' : 'rgba(100,255,150,0.4)';
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function burstConfetti() {
+    const colors = ['#c084fc','#a78bfa','#ffd700','#ff9f00','#7fff7f','#00d4ff','#fff'];
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `position:fixed;width:${Math.random()*10+5}px;height:${Math.random()*10+5}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;top:-10px;border-radius:${Math.random()>0.5?'50%':'3px'};animation:fall ${Math.random()*2+1.5}s linear forwards;animation-delay:${Math.random()*0.6}s;z-index:200;pointer-events:none;`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  const style = document.createElement('style');
+  style.textContent = `@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}`;
+  document.head.appendChild(style);
+
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 130; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random()*2.2+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*3+1.5}s;`;
+    starsEl.appendChild(s);
+  }
+
+  // Glitter
+  const glitterColors = ['#c084fc','#ffd700','#a78bfa','#fff','#60a5fa'];
+  for (let i = 0; i < 18; i++) {
+    const g = document.createElement('div');
+    g.className = 'glitter';
+    g.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--gs:${Math.random()*10+5}px;--gc:${glitterColors[Math.floor(Math.random()*glitterColors.length)]};--gd:${Math.random()*4+3}s;--gdel:${Math.random()*5}s;`;
+    document.body.appendChild(g);
+  }
+</script>
+</body>
+</html>

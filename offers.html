@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Твои предложения от университетов</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0d0d1a;
+      font-family: 'Lato', sans-serif;
+      overflow-x: hidden;
+      padding: 48px 20px 72px;
+    }
+
+    /* Stars */
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .star {
+      position: absolute; border-radius: 50%; background: #fff;
+      animation: twinkle var(--dur) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.06; transform: scale(0.8); }
+      to   { opacity: 0.85; transform: scale(1.3); }
+    }
+
+    /* Glitter */
+    .glitter {
+      position: fixed; pointer-events: none; z-index: 1;
+      width: var(--gs); height: var(--gs); background: var(--gc);
+      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      animation: glitterFloat var(--gd) ease-in-out infinite; animation-delay: var(--gdel);
+    }
+    @keyframes glitterFloat {
+      0%,100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.5; }
+      50%      { transform: translateY(-20px) rotate(180deg) scale(1.3); opacity: 1; }
+    }
+
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.16;
+      pointer-events: none; animation: floatOrb var(--t) ease-in-out infinite alternate;
+    }
+    @keyframes floatOrb {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(var(--tx),var(--ty)) scale(1.15); }
+    }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.45); text-decoration: none; font-size: 13px;
+      letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s;
+      margin-bottom: 48px; position: relative; z-index: 10;
+    }
+    .back-link:hover { color: #ffd700; }
+
+    .page-header {
+      text-align: center; margin-bottom: 56px; position: relative; z-index: 10;
+    }
+    .page-header .eyebrow {
+      font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+      color: #f0c040; opacity: 0.8; margin-bottom: 14px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px,5vw,50px); color: #fff; line-height: 1.2;
+      background: linear-gradient(135deg, #ffd700, #fff 60%, #ffd700);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 14px;
+    }
+    .page-header p { color: rgba(255,255,255,0.5); font-size: 16px; max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+    .divider {
+      display: flex; align-items: center; gap: 14px; margin: 0 auto 20px; max-width: 480px;
+    }
+    .divider::before,.divider::after {
+      content:''; flex:1; height:1px;
+      background: linear-gradient(90deg,transparent,rgba(240,192,64,0.45),transparent);
+    }
+    .divider span { color: #f0c040; font-size: 18px; }
+
+    /* LSE guaranteed banner */
+    .lse-banner {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      background: linear-gradient(135deg, rgba(0,42,92,0.5), rgba(10,60,130,0.5));
+      border: 1px solid rgba(100,160,255,0.35);
+      border-radius: 20px;
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 40px rgba(0,80,200,0.15), inset 0 0 60px rgba(0,40,120,0.1);
+      animation: lsePulse 3s ease-in-out infinite;
+    }
+    @keyframes lsePulse {
+      0%,100% { box-shadow: 0 0 40px rgba(0,80,200,0.15), inset 0 0 60px rgba(0,40,120,0.1); }
+      50%      { box-shadow: 0 0 70px rgba(0,100,255,0.3), inset 0 0 60px rgba(0,40,120,0.1); }
+    }
+    .lse-banner-icon { font-size: 48px; flex-shrink: 0; filter: drop-shadow(0 0 14px rgba(100,180,255,0.7)); }
+    .lse-banner-text { flex: 1; min-width: 200px; }
+    .lse-banner-text .lse-sure {
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: #60a5fa; margin-bottom: 6px;
+    }
+    .lse-banner-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px,3vw,26px); color: #fff; margin-bottom: 6px;
+    }
+    .lse-banner-text p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .lse-banner-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #002a5c, #0f52ba);
+      color: #fff; font-weight: 700; font-size: 13px; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; border-radius: 50px;
+      box-shadow: 0 6px 24px rgba(15,82,186,0.45);
+      transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .lse-banner-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 36px rgba(15,82,186,0.65); }
+    .badge-gold {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg,#ffd700,#ff9f00);
+      font-size: 9px; font-weight: 900; letter-spacing: 1.5px;
+      text-transform: uppercase; border-radius: 50px;
+    }
+    .guaranteed-badge { color: #000; padding: 5px 14px; margin-bottom: 10px; }
+    .offer-badge { color: #1a0533; padding: 4px 12px; position: absolute; top: 16px; right: 16px; z-index: 2; }
+
+    /* Grid */
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 10;
+    }
+
+    .uni-card {
+      position: relative; border-radius: 20px; overflow: hidden;
+      text-decoration: none; display: block;
+      transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s;
+      animation: cardIn 0.7s ease both; animation-delay: var(--delay); cursor: pointer;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .uni-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 28px 72px rgba(0,0,0,0.6), 0 0 0 1px var(--accent); }
+
+    .card-bg { position: absolute; inset: 0; background: var(--bg); opacity: 0.12; transition: opacity 0.35s; }
+    .uni-card:hover .card-bg { opacity: 0.22; }
+    .card-border { position: absolute; inset: 0; border-radius: 20px; border: 1px solid var(--accent); opacity: 0.25; transition: opacity 0.35s; }
+    .uni-card:hover .card-border { opacity: 0.65; }
+
+    .card-inner {
+      position: relative; z-index: 1; padding: 32px 28px 28px;
+      background: rgba(255,255,255,0.03); backdrop-filter: blur(12px);
+      height: 100%; display: flex; flex-direction: column;
+    }
+
+    .card-flag {
+      width: 56px; height: 56px; border-radius: 12px; background: var(--accent);
+      display: flex; align-items: center; justify-content: center; font-size: 26px;
+      margin-bottom: 18px; box-shadow: 0 6px 20px color-mix(in srgb,var(--accent) 40%,transparent);
+      transition: transform 0.3s;
+    }
+    .uni-card:hover .card-flag { transform: rotate(-6deg) scale(1.1); }
+
+    .card-country { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; opacity: 0.85; }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; line-height: 1.3; margin-bottom: 12px; }
+    .card-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.7; flex: 1; margin-bottom: 24px; }
+
+    .card-cta {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+      border-radius: 50px; background: var(--accent); color: var(--btn-text,#fff);
+      font-weight: 700; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+      transition: filter 0.2s, transform 0.2s; align-self: flex-start;
+    }
+    .uni-card:hover .card-cta { filter: brightness(1.15); transform: translateX(4px); }
+
+    .footer-note {
+      text-align: center; margin-top: 52px; color: rgba(255,255,255,0.25);
+      font-size: 13px; line-height: 1.8; position: relative; z-index: 10;
+    }
+
+
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="orb" style="width:600px;height:600px;background:#6600cc;left:-150px;top:-150px;--t:14s;--tx:60px;--ty:40px;"></div>
+<div class="orb" style="width:500px;height:500px;background:#c8102e;right:-100px;top:200px;--t:18s;--tx:-80px;--ty:60px;"></div>
+<div class="orb" style="width:400px;height:400px;background:#003c71;left:30%;bottom:-100px;--t:12s;--tx:40px;--ty:-40px;"></div>
+
+<a href="index.html" class="back-link">← Назад</a>
+
+<div class="page-header">
+  <p class="eyebrow">C выпускным Ширинжан</p>
+  <h1>Выбери свой университет</h1>
+</div>
+
+<div class="divider"><span>✦</span></div>
+
+<!-- LSE Guaranteed Banner -->
+<div class="lse-banner">
+  <div class="lse-banner-icon">🏛️</div>
+  <div class="lse-banner-text">
+    <div class="badge-gold guaranteed-badge">100% поступишь</div>
+    <h2>London School of Economics</h2>
+    <p>Ты 100 проц получишь здесь приглос так что можно тоже добавить</p>
+  </div>
+  <a href="lse.html" class="lse-banner-btn">Принять предложение →</a>
+</div>
+
+<div class="grid">
+
+  <a href="uom.html" class="uni-card" style="--accent:#9b59b6;--bg:linear-gradient(135deg,#660099,#9b00cc);--delay:0.1s;">
+    <div class="card-bg"></div><div class="card-border"></div>
+    <span class="badge-gold offer-badge">✓ Предложение</span>
+    <div class="card-inner">
+      <div class="card-flag">🟣</div>
+      <p class="card-country">Великобритания · Манчестер</p>
+      <h2 class="card-name">Университет Манчестера</h2>
+      <span class="card-cta">Открыть и принять →</span>
+    </div>
+  </a>
+
+  <a href="kings.html" class="uni-card" style="--accent:#d4291a;--bg:linear-gradient(135deg,#ab1f2b,#e63946);--delay:0.2s;">
+    <div class="card-bg"></div><div class="card-border"></div>
+    <span class="badge-gold offer-badge">✓ Предложение</span>
+    <div class="card-inner">
+      <div class="card-flag">👑</div>
+      <p class="card-country">Великобритания · Лондон</p>
+      <h2 class="card-name">Королевский колледж Лондона</h2>
+      <span class="card-cta">Открыть и принять →</span>
+    </div>
+  </a>
+
+  <a href="waterloo.html" class="uni-card" style="--accent:#f5a623;--bg:linear-gradient(135deg,#cc8800,#ffc72c);--btn-text:#1a0533;--delay:0.3s;">
+    <div class="card-bg"></div><div class="card-border"></div>
+    <span class="badge-gold offer-badge">✓ Предложение</span>
+    <div class="card-inner">
+      <div class="card-flag">🦅</div>
+      <p class="card-country">Канада · Ватерлоо, Онтарио</p>
+      <h2 class="card-name">Университет Ватерлоо</h2>
+      <span class="card-cta">Открыть и принять →</span>
+    </div>
+  </a>
+
+  <a href="toronto.html" class="uni-card" style="--accent:#2f6eb5;--bg:linear-gradient(135deg,#002a5c,#0f52ba);--delay:0.4s;">
+    <div class="card-bg"></div><div class="card-border"></div>
+    <span class="badge-gold offer-badge">✓ Предложение</span>
+    <div class="card-inner">
+      <div class="card-flag">🍁</div>
+      <p class="card-country">Канада · Торонто, Онтарио</p>
+      <h2 class="card-name">Университет Торонто</h2>
+      <span class="card-cta">Открыть и принять →</span>
+    </div>
+  </a>
+
+</div>
+
+<script>
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 140; i++) {
+    const s = document.createElement('div'); s.className = 'star';
+    const sz = Math.random()*2.2+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*3+1.5}s;`;
+    starsEl.appendChild(s);
+  }
+  const gc = ['#c084fc','#ffd700','#60a5fa','#fff','#f472b6'];
+  for (let i = 0; i < 22; i++) {
+    const g = document.createElement('div'); g.className = 'glitter';
+    g.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--gs:${Math.random()*10+5}px;--gc:${gc[Math.floor(Math.random()*gc.length)]};--gd:${Math.random()*4+3}s;--gdel:${Math.random()*6}s;`;
+    document.body.appendChild(g);
+  }
+</script>
+</body>
+</html>
