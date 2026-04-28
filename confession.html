@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💕</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fff0f5 0%, #ffe4ed 50%, #ffd6e4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating heart background */
+    .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .heart-particle {
+      position: absolute;
+      font-size: var(--hs);
+      animation: heartFloat var(--hd) ease-in-out infinite;
+      animation-delay: var(--hdel);
+      opacity: 0.45;
+      user-select: none;
+    }
+    @keyframes heartFloat {
+      0%,100% { transform: translateY(0) rotate(-8deg); opacity: 0.3; }
+      50%      { transform: translateY(-22px) rotate(8deg); opacity: 0.6; }
+    }
+
+    /* Pink sparkles */
+    .sparkle {
+      position: fixed; pointer-events: none; z-index: 1;
+      width: var(--ss); height: var(--ss); background: var(--sc);
+      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      animation: sparkleFloat var(--sd) ease-in-out infinite;
+      animation-delay: var(--sdel);
+    }
+    @keyframes sparkleFloat {
+      0%,100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.55; }
+      50%      { transform: translateY(-18px) rotate(180deg) scale(1.2); opacity: 1; }
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative; z-index: 10;
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(22px);
+      border: 1.5px solid rgba(255,160,200,0.45);
+      border-radius: 32px;
+      width: min(510px, 92vw);
+      padding: 62px 54px 58px;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(255,100,160,0.18), 0 0 0 1px rgba(255,200,220,0.3);
+      animation: cardIn 1s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(50px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .heart-icon {
+      font-size: 76px;
+      display: block;
+      margin-bottom: 18px;
+      animation: heartbeat 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 22px rgba(255,80,130,0.45));
+    }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      15%      { transform: scale(1.2); }
+      30%      { transform: scale(0.95); }
+      45%      { transform: scale(1.1); }
+    }
+
+    .eyebrow {
+      font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+      color: #e0609a; margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 44px);
+      line-height: 1.2;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #d43070, #ff80b4 55%, #c02865);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .love-sub {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: rgba(200,80,120,0.6);
+      margin-bottom: 24px;
+    }
+
+    .confession-text {
+      font-size: 15.5px;
+      color: #a04870;
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-family: 'Playfair Display', serif;
+      font-size: 21px;
+      color: #c02a65;
+      margin-bottom: 40px;
+      font-weight: 700;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .accept-btn {
+      padding: 17px 42px;
+      background: linear-gradient(135deg, #ff4d8f, #ff80b4);
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 30px rgba(255,80,150,0.38);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .accept-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 44px rgba(255,80,150,0.55); }
+    .accept-btn:active { transform: scale(0.97); }
+
+    /* reject button — starts normal, goes fixed via JS */
+    .reject-btn {
+      padding: 17px 42px;
+      background: rgba(255,255,255,0.65);
+      color: #c08098;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      border: 1.5px solid rgba(255,160,190,0.55);
+      border-radius: 50px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      user-select: none;
+      white-space: nowrap;
+      z-index: 50;
+      transition: left 0.12s ease-out, top 0.12s ease-out;
+    }
+
+    /* Thank you state */
+    .thankyou {
+      display: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      line-height: 1.4;
+      color: #d43070;
+      animation: thankIn 0.6s cubic-bezier(.22,.68,0,1.4) both;
+    }
+    @keyframes thankIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .thankyou-sub {
+      font-size: 18px;
+      color: #e06090;
+      margin-top: 10px;
+    }
+
+    /* ── Floating Kirby characters ── */
+    .kirby-float {
+      position: fixed; z-index: 5;
+      width: 155px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,210,230,0.65);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,140,190,0.5);
+      box-shadow: 0 10px 32px rgba(255,80,140,0.28);
+      pointer-events: none;
+      opacity: 0;
+      animation: kirbyAppear 0.8s var(--kad) ease forwards,
+                 kirbyBob    var(--kf) calc(var(--kad) + 0.8s) ease-in-out infinite alternate;
+    }
+    @keyframes kirbyAppear {
+      from { opacity: 0; transform: rotate(var(--krot)) scale(0.7); }
+      to   { opacity: 1; transform: rotate(var(--krot)) scale(1); }
+    }
+    @keyframes kirbyBob {
+      from { transform: rotate(var(--krot)) translateY(0); }
+      to   { transform: rotate(var(--krot)) translateY(-13px); }
+    }
+    .kirby-float img {
+      width: 100%; height: 130px; object-fit: contain; display: block;
+      padding: 10px 10px 4px;
+      background: rgba(255,200,225,0.4);
+    }
+    .kirby-float .kf-caption {
+      padding: 6px 9px 9px;
+      font-size: 10px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.5px; text-align: center;
+      color: #9a2050;
+      font-family: 'Lato', sans-serif;
+      background: rgba(255,180,215,0.7);
+    }
+
+    @media (max-width: 960px) { .kirby-float { display: none; } }
+  </style>
+</head>
+<body>
+
+<div class="hearts-bg" id="hearts-bg"></div>
+
+<!-- ── Floating Kirby characters — symmetric 3×2 ── -->
+
+<!-- Row 1: top -->
+<div class="kirby-float" style="top:5%;left:1.5%;--krot:-8deg;--kf:4.4s;--kad:0.3s;">
+  <img src="pic5.jpeg" alt="Kirby" loading="lazy" />
+</div>
+<div class="kirby-float" style="top:5%;right:1.5%;--krot:8deg;--kf:4.4s;--kad:0.3s;">
+  <img src="pic6.jpeg" alt="Kirby" loading="lazy" />
+</div>
+
+<!-- Row 2: middle -->
+<div class="kirby-float" style="top:38%;left:0.8%;--krot:-4deg;--kf:5.1s;--kad:0.7s;">
+  <img src="me.jpeg" alt="Kirby" loading="lazy" />
+</div>
+<div class="kirby-float" style="top:38%;right:0.8%;--krot:4deg;--kf:5.1s;--kad:0.7s;">
+  <img src="PIC1.jpeg" alt="Kirby" loading="lazy" />
+</div>
+
+<!-- Row 3: bottom -->
+<div class="kirby-float" style="bottom:7%;left:1.5%;--krot:5deg;--kf:4.8s;--kad:1.1s;">
+  <img src="PIC2.jpeg" alt="Kirby" loading="lazy" />
+</div>
+<div class="kirby-float" style="bottom:7%;right:1.5%;--krot:-5deg;--kf:4.8s;--kad:1.1s;">
+  <img src="PIC3.jpeg" alt="Kirby" loading="lazy" />
+</div>
+
+<!-- ── Main card ── -->
+<div class="card">
+  <span class="heart-icon">💖</span>
+  <h1>Я тебя люблю</h1>
+  <p class="love-sub">I Love You</p>
+  <p class="confession-text">
+    Скучаю по тебе
+  </p>
+  <p class="question">Что ты выберешь?</p>
+
+  <div id="btn-area">
+    <div class="btn-row">
+      <button class="accept-btn" onclick="accept()">Буду всегда твой келиночкой</button>
+      <!-- placeholder keeps layout space while reject is fixed -->
+      <div id="reject-ph" style="display:inline-block;"></div>
+    </div>
+  </div>
+
+  <div class="thankyou" id="thankyou">
+    🌸 Спасибо! 🌸
+    <div class="thankyou-sub"></div>
+  </div>
+</div>
+
+<!-- Reject button — placed over placeholder via JS, then goes fixed -->
+<button class="reject-btn" id="reject-btn" onclick="tryReject()">Нет</button>
+
+<script>
+  const rejectBtn = document.getElementById('reject-btn');
+  const rejectPh  = document.getElementById('reject-ph');
+  let isFixed = false;
+
+  function snapToPlaceholder() {
+    const r = rejectPh.getBoundingClientRect();
+    rejectBtn.style.position = 'absolute';
+    rejectBtn.style.left     = r.left  + window.scrollX + 'px';
+    rejectBtn.style.top      = r.top   + window.scrollY + 'px';
+    rejectPh.style.width     = rejectBtn.offsetWidth  + 'px';
+    rejectPh.style.height    = rejectBtn.offsetHeight + 'px';
+  }
+
+  function makeFixed() {
+    const r = rejectBtn.getBoundingClientRect();
+    rejectBtn.style.position = 'fixed';
+    rejectBtn.style.left     = r.left + 'px';
+    rejectBtn.style.top      = r.top  + 'px';
+    isFixed = true;
+  }
+
+  function flee() {
+    const margin = 20;
+    const maxX = window.innerWidth  - rejectBtn.offsetWidth  - margin;
+    const maxY = window.innerHeight - rejectBtn.offsetHeight - margin;
+    rejectBtn.style.left = (margin + Math.random() * maxX) + 'px';
+    rejectBtn.style.top  = (margin + Math.random() * maxY) + 'px';
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    const r   = rejectBtn.getBoundingClientRect();
+    const cx  = r.left + r.width  / 2;
+    const cy  = r.top  + r.height / 2;
+    const d   = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if (d < 130) {
+      if (!isFixed) makeFixed();
+      flee();
+    }
+  });
+
+  function tryReject() { flee(); }
+
+  function accept() {
+    document.getElementById('btn-area').style.display = 'none';
+    rejectBtn.style.display = 'none';
+    const ty = document.getElementById('thankyou');
+    ty.style.display = 'block';
+    burstConfetti();
+    burstHearts();
+  }
+
+  function burstConfetti() {
+    const colors = ['#ff80b4','#ff5599','#ffb3d4','#ff3377','#ffd6e8','#fff0f5','#ff99cc','#ffcce0'];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `position:fixed;width:${Math.random()*10+5}px;height:${Math.random()*10+5}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;top:-10px;border-radius:${Math.random()>0.5?'50%':'3px'};animation:fall ${Math.random()*2+1.5}s linear forwards;animation-delay:${Math.random()*0.5}s;z-index:999;pointer-events:none;`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  function burstHearts() {
+    const picks = ['❤️','💕','💖','💗','💓','🌸','💘','✨'];
+    for (let i = 0; i < 35; i++) {
+      const h = document.createElement('div');
+      h.textContent = picks[Math.floor(Math.random() * picks.length)];
+      h.style.cssText = `position:fixed;font-size:${Math.random()*22+14}px;left:${Math.random()*100}%;top:-20px;animation:fall ${Math.random()*3+2}s linear forwards;animation-delay:${Math.random()*0.8}s;z-index:999;pointer-events:none;`;
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 5500);
+    }
+  }
+
+  const fallStyle = document.createElement('style');
+  fallStyle.textContent = `@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}`;
+  document.head.appendChild(fallStyle);
+
+  // Floating heart background
+  const hbg = document.getElementById('hearts-bg');
+  const heartEmojis = ['❤️','💕','💖','💗','💓','🌸','💘','✨','🌷','🌺'];
+  for (let i = 0; i < 22; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-particle';
+    h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    h.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--hs:${Math.random()*18+10}px;--hd:${Math.random()*4+3}s;--hdel:${Math.random()*5}s;`;
+    hbg.appendChild(h);
+  }
+
+  // Pink sparkles
+  const sparkColors = ['#ff80b4','#ffb3d4','#ff5599','#ff99cc','#ffe0ee','#ffd6e8'];
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--ss:${Math.random()*10+5}px;--sc:${sparkColors[Math.floor(Math.random()*sparkColors.length)]};--sd:${Math.random()*4+3}s;--sdel:${Math.random()*5}s;`;
+    document.body.appendChild(s);
+  }
+
+  // Initial positioning of reject button
+  window.addEventListener('load', snapToPlaceholder);
+  window.addEventListener('resize', () => { if (!isFixed) snapToPlaceholder(); });
+</script>
+</body>
+</html>
